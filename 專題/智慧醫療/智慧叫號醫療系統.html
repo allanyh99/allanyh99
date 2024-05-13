@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智慧叫號醫療系統</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+<body>   
+        <div id="container">
+            <h1>智慧叫號醫療系統</h1>
+    
+            <div id="patient-list">
+                <h2>病患列表</h2>
+                <ul id="patient-ul">
+                    <!-- 病患列表將在 JavaScript 中動態生成 -->
+                </ul>
+            </div>
+    
+            <div id="call-button">
+                <h2>呼叫下一位</h2>
+                <button onclick="callNextPatient()">呼叫</button>
+            </div>
+    
+            <div id="display-number">
+                <!-- 顯示被呼叫的病患號碼將在 JavaScript 中更新 -->
+            </div>
+    
+            <div id="input-form">
+                <h2>新增病患</h2>
+                <form onsubmit="addPatient(event)">
+                    <label for="patient-number">病患編號：</label>
+                    <input type="text" id="patient-number" required>
+                    <button type="submit">新增</button>
+                </form>
+    
+                <!-- 新增 VIP 插號功能 -->
+                <h2>VIP 插號</h2>
+                <form onsubmit="insertVipPatient(event)">
+                    <button type="submit">VIP 插號</button>
+                </form>
+    
+                <!-- 新增直接選號功能 -->
+                <h2>直接選號</h2>
+                <form onsubmit="choosePatient(event)">
+                    <label for="selected-number">選擇病患編號：</label>
+                    <input type="text" id="selected-number" required>
+                    <button type="submit">選擇</button>
+                </form>
+            </div>
+        </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
+
+
