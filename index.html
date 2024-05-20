@@ -1,57 +1,217 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>智慧叫號醫療系統</title>
-    <link rel="stylesheet" type="text/css" href="./CSS/styles.css">
+    <title>智慧叫號系統</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f4f4f4;
+        }
+
+        #container {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            max-width: 800px;
+            width: 90%;
+            margin: 20px;
+            padding: 40px;
+            box-sizing: border-box;
+        }
+
+        h1, h2, h3 {
+            color: #007bff;
+        }
+
+        #patient-list {
+            width: 100%;
+            margin-bottom: 30px;
+        }
+
+        #patient-ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        #patient-ul li {
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        #patient-ul li:hover {
+            background-color: #f0f0f0;
+            transform: scale(1.02);
+        }
+
+        #call-button {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        #call-button button {
+            padding: 14px 28px;
+            font-size: 18px;
+            cursor: pointer;
+            background-color: #4caf50;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        #call-button button:hover {
+            background-color: #45a049;
+            transform: scale(1.05);
+        }
+
+        #display-number {
+            font-size: 28px;
+            margin-bottom: 30px;
+            text-align: center;
+            color: #333;
+        }
+
+        #input-form {
+            text-align: center;
+        }
+
+        #input-form label {
+            margin-right: 12px;
+            color: #333;
+        }
+
+        #input-form input {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+
+        #input-form button {
+            padding: 14px 28px;
+            font-size: 18px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        #input-form button:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        #patient-ul li.called {
+            color: red;
+        }
+
+        #patient-ul li.current-call {
+            background-color: #ffcccc;
+            color: red;
+            font-weight: bold;
+        }
+    </style>
 </head>
-<body>   
-        <div id="container">
-            <h1>智慧叫號醫療系統</h1>
-    
-            <div id="patient-list">
-                <h2>病患列表</h2>
-                <ul id="patient-ul">
-                    <!-- 病患列表將在 JavaScript 中動態生成456 -->
-                </ul>
-            </div>
-    
-            <div id="call-button">
-                <h2>呼叫下一位</h2>
-                <button onclick="callNextPatient()">呼叫</button>
-            </div>
-    
-            <div id="display-number">
-                <!-- 顯示被呼叫的病患號碼將在 JavaScript 中更新 -->
-            </div>
-    
-            <div id="input-form">
-                <h2>新增病患</h2>
-                <form onsubmit="addPatient(event)">
-                    <label for="patient-number">病患編號：</label>
-                    <input type="text" id="patient-number" required>
-                    <button type="submit">新增</button>
-                </form>
-    
-                <!-- 新增 VIP 插號功能 -->
-                <h2>VIP 插號</h2>
-                <form onsubmit="insertVipPatient(event)">
-                    <button type="submit">VIP 插號</button>
-                </form>
-    
-                <!-- 新增直接選號功能 -->
-                <h2>直接選號</h2>
-                <form onsubmit="choosePatient(event)">
-                    <label for="selected-number">選擇病患編號：</label>
-                    <input type="text" id="selected-number" required>
-                    <button type="submit">選擇</button>
-                </form>
-            </div>
+<body>
+    <div id="container">
+        <h1>智慧叫號系統</h1>
+        <div id="patient-list">
+            <ul id="patient-ul"></ul>
         </div>
-    
-    <script src="./JS/script.js"></script>
+        <div id="display-number">尚未呼叫任何病患</div>
+        <div id="call-button">
+            <button onclick="callNextPatient()">呼叫下一位病患</button>
+        </div>
+        <div id="input-form">
+            <label for="patient-number">新增病患編號：</label>
+            <input type="text" id="patient-number">
+            <button onclick="addPatient(event)">新增病患</button>
+            <button onclick="insertVipPatient(event)">插入VIP病患</button>
+            <br><br>
+            <label for="selected-number">選擇病患編號：</label>
+            <input type="text" id="selected-number">
+            <button onclick="choosePatient(event)">選擇病患</button>
+        </div>
+    </div>
+    <script>
+        const patients = ['001', '002', '003', '004', '005'];
+        let currentPatientIndex = 0;
+        const patientList = document.getElementById('patient-ul');
+        const displayNumber = document.getElementById('display-number');
+
+        // 初始化病患列表
+        patients.forEach(patient => {
+            const listItem = document.createElement('li');
+            listItem.textContent = `病患 ${patient}`;
+            patientList.appendChild(listItem);
+        });
+
+        function callNextPatient() {
+            if (currentPatientIndex < patients.length) {
+                const nextListItem = patientList.childNodes[currentPatientIndex];
+
+                // 增加當前呼叫的紅色標記
+                if (nextListItem && nextListItem.nodeName === 'LI' && nextListItem.classList) {
+                    nextListItem.classList.add('current-call');
+                }
+
+                const nextPatient = patients[currentPatientIndex];
+                displayNumber.textContent = `呼叫病患 ${nextPatient}`;
+                currentPatientIndex++;
+            } else {
+                displayNumber.textContent = '所有病患已呼叫完畢';
+            }
+        }
+
+        function addPatient(event) {
+            event.preventDefault();
+            const newPatientNumber = document.getElementById('patient-number').value;
+            if (newPatientNumber.trim() !== '') {
+                patients.push(newPatientNumber);
+                const newListItem = document.createElement('li');
+                newListItem.textContent = `病患 ${newPatientNumber}`;
+                patientList.appendChild(newListItem);
+                document.getElementById('patient-number').value = '';
+            }
+        }
+
+        function insertVipPatient(event) {
+            event.preventDefault();
+            const vipNumber = prompt('請輸入VIP病患編號：');
+            if (vipNumber && vipNumber.trim() !== '') {
+                patients.splice(currentPatientIndex, 0, vipNumber);
+                const newListItem = document.createElement('li');
+                newListItem.textContent = `病患 ${vipNumber} (VIP)`;
+                patientList.insertBefore(newListItem, patientList.childNodes[currentPatientIndex]);
+            }
+        }
+
+        function choosePatient(event) {
+            event.preventDefault();
+            const selectedNumber = document.getElementById('selected-number').value;
+            const selectedIndex = patients.indexOf(selectedNumber);
+            if (selectedIndex !== -1) {
+                currentPatientIndex = selectedIndex;
+                displayNumber.textContent = `選擇病患 ${selectedNumber}`;
+            } else {
+                alert('找不到該病患編號！');
+            }
+            document.getElementById('selected-number').value = '';
+        }
+    </script>
 </body>
 </html>
-
-
