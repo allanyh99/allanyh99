@@ -124,11 +124,17 @@
             color: red;
             font-weight: bold;
         }
+
+        #animated-title {
+            text-align: center;
+        }
     </style>
+    <script src="blotter.min.js"></script>
+    <script src="channelSplitMaterial.js"></script>
 </head>
 <body>
     <div id="container">
-        <h1>智慧叫號系統</h1>
+        <h1 id="animated-title">您好歡迎使用</h1>
         <div id="patient-list">
             <ul id="patient-ul"></ul>
         </div>
@@ -211,6 +217,23 @@
                 alert('找不到該病患編號！');
             }
             document.getElementById('selected-number').value = '';
+        }
+
+        // Blotter.js動畫
+        window.onload = function() {
+            var text = new Blotter.Text("智慧叫號系統", {
+                family : "serif",
+                size : 120,
+                fill : "#171717"
+            });
+
+            var material = new Blotter.ChannelSplitMaterial();
+
+            var blotter = new Blotter(material, { texts : text });
+
+            var scope = blotter.forText(text);
+
+            scope.appendTo(document.getElementById("animated-title"));
         }
     </script>
 </body>
