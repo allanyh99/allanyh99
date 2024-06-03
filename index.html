@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>智慧叫號系統</title>
+    <!-- 使用CDN方式嵌入PixiJS -->
+    <script src="https://cdn.jsdelivr.net/npm/pixi.js@7.x/dist/pixi.min.js"></script>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -26,7 +28,9 @@
             margin: 20px;
             padding: 40px;
             box-sizing: border-box;
+            position: relative; /* 添加相對定位 */
         }
+
         h1, h2, h3 {
             color: #007bff;
         }
@@ -128,8 +132,7 @@
             text-align: center;
         }
     </style>
-    <script src="/JS/blotter.min.js"></script>
-    <script src="/JS/channelSplitMaterial.js"></script>
+  
 </head>
 <body>
     <div id="container">
@@ -216,23 +219,6 @@
                 alert('找不到該病患編號！');
             }
             document.getElementById('selected-number').value = '';
-        }
-
-        // Blotter.js動畫
-        window.onload = function() {
-            var text = new Blotter.Text("智慧叫號系統", {
-                family : "serif",
-                size : 120,
-                fill : "#333"
-            });
-
-            var material = new Blotter.ChannelSplitMaterial();
-
-            var blotter = new Blotter(material, { texts : text });
-
-            var scope = blotter.forText(text);
-
-            scope.appendTo(document.getElementById("animated-title"));
         }
     </script>
 </body>

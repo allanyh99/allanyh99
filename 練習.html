@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>智慧叫號系統</title>
-    <!-- 使用CDN方式嵌入PixiJS -->
-    <script src="https://cdn.jsdelivr.net/npm/pixi.js@7.x/dist/pixi.min.js"></script>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -28,7 +26,6 @@
             margin: 20px;
             padding: 40px;
             box-sizing: border-box;
-            position: relative; /* 添加相對定位 */
         }
 
         h1, h2, h3 {
@@ -102,6 +99,14 @@
             margin-right: 10px;
         }
 
+        #input-form .button-group {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
         #input-form button {
             padding: 14px 28px;
             font-size: 18px;
@@ -127,16 +132,11 @@
             color: red;
             font-weight: bold;
         }
-
-        #animated-title {
-            text-align: center;
-        }
     </style>
-  
 </head>
 <body>
     <div id="container">
-        <h1 id="animated-title">您好歡迎使用</h1>
+        <h1>您好歡迎使用</h1>
         <div id="patient-list">
             <ul id="patient-ul"></ul>
         </div>
@@ -147,8 +147,11 @@
         <div id="input-form">
             <label for="patient-number">新增病患編號：</label>
             <input type="text" id="patient-number">
-            <button onclick="addPatient(event)">新增病患</button>
-            <button onclick="insertVipPatient(event)">插入VIP病患</button>
+            <div class="button-group">
+                <button onclick="addPatient(event)">新增病患</button>
+                <button onclick="insertVipPatient(event)">插入VIP病患</button>
+                <button onclick="insertElderlyPatient(event)">插入敬老病患</button>
+            </div>
             <br><br>
             <label for="selected-number">選擇病患編號：</label>
             <input type="text" id="selected-number">
@@ -156,7 +159,7 @@
         </div>
     </div>
     <script>
-        const patients = ['001', '002', '003', '004', '005'];
+        const patients = [{ number: '001', type: 'regular' }, { number: '002', type: 'regular' }, { number: '003', type: 'regular' }, { number: '004', type: 'regular' }, { number: '005', type: 'regular' }];
         let currentPatientIndex = 0;
         const patientList = document.getElementById('patient-ul');
         const displayNumber = document.getElementById('display-number');
@@ -164,12 +167,18 @@
         // 初始化病患列表
         patients.forEach(patient => {
             const listItem = document.createElement('li');
-            listItem.textContent = `病患 ${patient}`;
+            listItem.textContent = `病患 ${patient.number}`;
             patientList.appendChild(listItem);
         });
 
         function callNextPatient() {
             if (currentPatientIndex < patients.length) {
+                // 移除先前呼叫病患的紅色標記
+                const previousListItem = patientList.querySelector('.current-call');
+                if (previousListItem) {
+                    previousListItem.classList.remove('current-call');
+                }
+
                 const nextListItem = patientList.childNodes[currentPatientIndex];
 
                 // 增加當前呼叫的紅色標記
@@ -177,7 +186,7 @@
                     nextListItem.classList.add('current-call');
                 }
 
-                const nextPatient = patients[currentPatientIndex];
+                const nextPatient = patients[currentPatientIndex].number;
                 displayNumber.textContent = `呼叫病患 ${nextPatient}`;
                 currentPatientIndex++;
             } else {
@@ -187,34 +196,67 @@
 
         function addPatient(event) {
             event.preventDefault();
-            const newPatientNumber = document.getElementById('patient-number').value;
-            if (newPatientNumber.trim() !== '') {
-                patients.push(newPatientNumber);
+            const newPatientNumber = document.getElementById('patient-number').value.trim();
+            if (newPatientNumber !== '' && !patients.some(patient => patient.number === newPatientNumber)) {
+                patients.push({ number: newPatientNumber, type: 'regular' });
                 const newListItem = document.createElement('li');
                 newListItem.textContent = `病患 ${newPatientNumber}`;
                 patientList.appendChild(newListItem);
                 document.getElementById('patient-number').value = '';
+                alert(`病患 ${newPatientNumber} 已新增`);
+            } else {
+                alert('請輸入有效的病患編號或編號已存在');
             }
         }
 
         function insertVipPatient(event) {
             event.preventDefault();
-            const vipNumber = prompt('請輸入VIP病患編號：');
-            if (vipNumber && vipNumber.trim() !== '') {
-                patients.splice(currentPatientIndex, 0, vipNumber);
+            const vipNumber = document.getElementById('patient-number').value.trim();
+            if (vipNumber !== '' && !patients.some(patient => patient.number === vipNumber)) {
+                patients.splice(currentPatientIndex, 0, { number: vipNumber, type: 'vip' });
                 const newListItem = document.createElement('li');
                 newListItem.textContent = `病患 ${vipNumber} (VIP)`;
                 patientList.insertBefore(newListItem, patientList.childNodes[currentPatientIndex]);
+                document.getElementById('patient-number').value = '';
+                alert(`VIP病患 ${vipNumber} 已插入`);
+            } else {
+                alert('請輸入有效的VIP病患編號或編號已存在');
+            }
+        }
+
+        function insertElderlyPatient(event) {
+            event.preventDefault();
+            const elderlyNumber = document.getElementById('patient-number').value.trim();
+            if (elderlyNumber !== '' && !patients.some(patient => patient.number === elderlyNumber)) {
+                const insertIndex = patients.findIndex(patient => patient.type !== 'vip');
+                const index = insertIndex === -1 ? currentPatientIndex : insertIndex;
+                patients.splice(index, 0, { number: elderlyNumber, type: 'elderly' });
+                const newListItem = document.createElement('li');
+                newListItem.textContent = `病患 ${elderlyNumber} (敬老)`;
+                patientList.insertBefore(newListItem, patientList.childNodes[index]);
+                document.getElementById('patient-number').value = '';
+                alert(`敬老病患 ${elderlyNumber} 已插入`);
+            } else {
+                alert('請輸入有效的敬老病患編號或編號已存在');
             }
         }
 
         function choosePatient(event) {
             event.preventDefault();
-            const selectedNumber = document.getElementById('selected-number').value;
-            const selectedIndex = patients.indexOf(selectedNumber);
+            const selectedNumber = document.getElementById('selected-number').value.trim();
+            const selectedIndex = patients.findIndex(patient => patient.number === selectedNumber);
             if (selectedIndex !== -1) {
                 currentPatientIndex = selectedIndex;
                 displayNumber.textContent = `選擇病患 ${selectedNumber}`;
+                // 更新紅色標記
+                const previousListItem = patientList.querySelector('.current-call');
+                if (previousListItem) {
+                    previousListItem.classList.remove('current-call');
+                }
+                const currentListItem = patientList.childNodes[currentPatientIndex];
+                if (currentListItem && currentListItem.nodeName === 'LI' && currentListItem.classList) {
+                    currentListItem.classList.add('current-call');
+                }
             } else {
                 alert('找不到該病患編號！');
             }
