@@ -136,8 +136,8 @@ function choosePatient(event) {
       if (currentListItem && currentListItem.nodeName === 'LI' && currentListItem.classList) {
           currentListItem.classList.add('current-call');
       }
-  } else {
-      alert('找不到該病患編號！');
+    } else {
+        alert('找不到該病患編號！');
+    }
+    document.getElementById('selected-number').value = '';
   }
-  document.getElementById('selected-number').value = '';
-}
