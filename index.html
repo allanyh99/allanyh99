@@ -1,57 +1,35 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>智慧叫號醫療系統</title>
-    <link rel="stylesheet" href="CSS/styles.css">
+    <title>智慧叫號系統</title>
+    <link rel="stylesheet" href="/CSS/styles.css">
 </head>
-<body>   
-        <div id="container">
-            <h1>智慧叫號醫療系統</h1>
-    
-            <div id="patient-list">
-                <h2>病患列表</h2>
-                <ul id="patient-ul">
-                    <!-- 病患列表將在 JavaScript 中動態生成456 -->
-                </ul>
-            </div>
-    
-            <div id="call-button">
-                <h2>呼叫下一位</h2>
-                <button onclick="callNextPatient()">呼叫</button>
-            </div>
-    
-            <div id="display-number">
-                <!-- 顯示被呼叫的病患號碼將在 JavaScript 中更新 -->
-            </div>
-    
-            <div id="input-form">
-                <h2>新增病患</h2>
-                <form onsubmit="addPatient(event)">
-                    <label for="patient-number">病患編號：</label>
-                    <input type="text" id="patient-number" required>
-                    <button type="submit">新增</button>
-                </form>
-    
-                <!-- 新增 VIP 插號功能 -->
-                <h2>VIP 插號</h2>
-                <form onsubmit="insertVipPatient(event)">
-                    <button type="submit">VIP 插號</button>
-                </form>
-    
-                <!-- 新增直接選號功能 -->
-                <h2>直接選號</h2>
-                <form onsubmit="choosePatient(event)">
-                    <label for="selected-number">選擇病患編號：</label>
-                    <input type="text" id="selected-number" required>
-                    <button type="submit">選擇</button>
-                </form>
-            </div>
+<body>
+    <div id="container">
+        <h1 id="animated-title">您好歡迎使用</h1>
+        <div id="patient-list">
+            <ul id="patient-ul"></ul>
         </div>
-    
-        <script src="JS/script.js"></script>
+        <div id="display-number">尚未呼叫任何病患</div>
+        <div id="call-button">
+            <button onclick="callNextPatient()">呼叫下一位病患</button>
+        </div>
+        <div id="input-form">
+            <label for="patient-number">新增病患編號：</label>
+            <input type="text" id="patient-number">
+            <div class="button-group">
+                <button onclick="addPatient(event)">新增病患</button>
+                <button onclick="insertVipPatient(event)">插入VIP病患</button>
+                <button onclick="insertElderlyPatient(event)">插入敬老病患</button>
+            </div>
+            <br><br>
+            <label for="selected-number">選擇病患編號：</label>
+            <input type="text" id="selected-number">
+            <button onclick="choosePatient(event)">選擇病患</button>
+        </div>
+    </div>
+    <script src="/JS/script.js"></script>
 </body>
 </html>
-
-
